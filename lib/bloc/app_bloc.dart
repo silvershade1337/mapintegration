@@ -13,7 +13,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
   final http.Client httpClient;
   AppBloc(this.httpClient) : super(const Initial()) {
     on<GoToInitial>((event, emit) {
-      emit(Initial());
+      emit(const Initial());
     },);
     on<NominatimSearch>(_searchNominatim);
     on<InstantLocate>(_locateInstant);
@@ -69,7 +69,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
       event.displayError('Location services are disabled.');
-      emit(Initial());
+      emit(const Initial());
       return;
     }
 
@@ -78,14 +78,14 @@ class AppBloc extends Bloc<AppEvent, AppState> {
       permission = await Geolocator.requestPermission();
       if (permission == LocationPermission.denied) {
         event.displayError('Location permissions are denied');
-        emit(Initial());
+        emit(const Initial());
         return;
       }
     }
     
     if (permission == LocationPermission.deniedForever) {
       event.displayError('Location permissions are permanently denied, we cannot request permissions.');
-      emit(Initial());
+      emit(const Initial());
       return;
     } 
 

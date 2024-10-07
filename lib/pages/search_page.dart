@@ -17,6 +17,7 @@ class _SearchPageState extends State<SearchPage> {
   TextEditingController searchInputController = TextEditingController();
   
   bool preProcessQuery() {
+    // Validates the search query, detects if the query is a coordinate and directly redirected to map, and returns a bool whether to continue with redirection to map page
     if (searchInputController.text.isNotEmpty) {
       RegExp coordinatesRegex = RegExp(r"(?<lat>\d+\.?\d*) *, *(?<lon>\d+\.?\d*)");
       RegExpMatch? match = coordinatesRegex.firstMatch(searchInputController.text);

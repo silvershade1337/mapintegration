@@ -21,12 +21,12 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(
               brightness: Brightness.dark,
-              seedColor: Color.fromARGB(255, 0, 255, 183)),
+              seedColor: const Color.fromARGB(255, 0, 255, 183)),
           useMaterial3: true,
         ),
         routes: {
-          "/search": (context) => SearchPage(),
-          "/map": (context) => MapPage()
+          "/search": (context) => const SearchPage(),
+          "/map": (context) => const MapPage()
         },
         initialRoute: "/search",
       ),

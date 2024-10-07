@@ -68,14 +68,17 @@ class _MapPageState extends State<MapPage> {
                   ],
                 ),
               ),
-              floatingActionButton: FloatingActionButton(
-                onPressed: () {
-                  setState(() {
-                    topological = !topological;
-                  });
-                },
-                tooltip: 'Toggle Map Type',
-                child: Icon(topological? Icons.landscape: Icons.map),
+              floatingActionButton: Padding(
+                padding: const EdgeInsets.only(bottom: 30), // make space for attibution widget
+                child: FloatingActionButton(
+                  onPressed: () {
+                    setState(() {
+                      topological = !topological;
+                    });
+                  },
+                  tooltip: 'Toggle Map Type',
+                  child: Icon(topological? Icons.landscape: Icons.map),
+                ),
               ) 
             ),
           );
