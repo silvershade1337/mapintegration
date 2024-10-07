@@ -25,6 +25,7 @@ class _MapPageState extends State<MapPage> {
           return WillPopScope(
             onWillPop: () async {
               Navigator.of(context).pop();
+              BlocProvider.of<AppBloc>(context).add(GoToInitial());
               return false;
             },
             child: Scaffold(

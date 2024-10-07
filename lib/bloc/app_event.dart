@@ -6,6 +6,11 @@ sealed class AppEvent extends Equatable {
   List<Object> get props => [];
 }
 
+final class GoToInitial extends AppEvent {
+  @override
+  List<Object> get props => [];
+}
+
 
 final class NominatimSearch extends AppEvent {
   final String query;

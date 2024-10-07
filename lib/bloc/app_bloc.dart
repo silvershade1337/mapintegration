@@ -12,6 +12,9 @@ part 'app_state.dart';
 class AppBloc extends Bloc<AppEvent, AppState> {
   final http.Client httpClient;
   AppBloc(this.httpClient) : super(const Initial()) {
+    on<GoToInitial>((event, emit) {
+      emit(Initial());
+    },);
     on<NominatimSearch>(_searchNominatim);
     on<InstantLocate>(_locateInstant);
     on<SelectLocation>(_selectLocation);
@@ -19,7 +22,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
   }
   
   _searchNominatim(NominatimSearch event, Emitter<AppState> emit) async {
-    emit(const Loading());
+    emit(const ResultsLoading());
     Uri uri = Uri.https("nominatim.openstreetmap.org", "search", {'q': event.query, 'format': 'json'});
     try {
       var resp = await httpClient.get(uri, headers: {"User-Agent": "mapint/1.0", "Accept": "*/*", "Accept-Encoding": "gzip, deflate, br"});
@@ -66,6 +69,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
       event.displayError('Location services are disabled.');
+      emit(Initial());
       return;
     }
 
@@ -74,12 +78,14 @@ class AppBloc extends Bloc<AppEvent, AppState> {
       permission = await Geolocator.requestPermission();
       if (permission == LocationPermission.denied) {
         event.displayError('Location permissions are denied');
+        emit(Initial());
         return;
       }
     }
     
     if (permission == LocationPermission.deniedForever) {
       event.displayError('Location permissions are permanently denied, we cannot request permissions.');
+      emit(Initial());
       return;
     } 
 

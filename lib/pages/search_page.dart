@@ -42,19 +42,17 @@ class _SearchPageState extends State<SearchPage> {
           if (state is MapDisplayed) {
             Navigator.of(context).pushNamed("/map");
           }
-        },
-        buildWhen: (previous, current) {
-          List<Type> buildWhenStates = [Loading, NominatimResultsFetched, NominatimSearch];
-          return buildWhenStates.contains(current.runtimeType);
+          if (state is Initial) {
+            searchInputController.text = "";
+          }
         },
         builder: (context, state) {
           return SafeArea(
             child: Column(
-              mainAxisAlignment: state is Initial? MainAxisAlignment.center : MainAxisAlignment.start,
+              mainAxisAlignment: state is Initial || state is Loading? MainAxisAlignment.center : MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                const Row(),
-                if (state is Initial) const Padding(
+                if (state is Initial || state is Loading) const Padding(
                   padding: EdgeInsets.all(20.0),
                   child: Text(
                     "Hey there,\n where would you like to explore today?",
@@ -92,18 +90,34 @@ class _SearchPageState extends State<SearchPage> {
                             LocateUser((message) => ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message))))
                           );
                         }, 
-                        child: const Text("Your Location")
+                        child: const Row(
+                          children: [
+                            Icon(Icons.location_searching),
+                            Padding(
+                              padding: EdgeInsets.all(8.0),
+                              child: Text("Your Location"),
+                            ),
+                          ],
+                        )
                       ),
                       ElevatedButton(
                         onPressed: () {
                           if (preProcessQuery()) BlocProvider.of<AppBloc>(context).add(InstantLocate(searchInputController.text));
                         }, 
-                        child: const Text("Insta-Locate")
+                        child: const Row(
+                          children: [
+                            Icon(Icons.location_on_outlined),
+                            Padding(
+                              padding: EdgeInsets.all(8.0),
+                              child: Text("Insta-Locate"),
+                            ),
+                          ],
+                        )
                       ),
                     ],
                   )
                 ),
-                if (state is Loading) const Padding(
+                if (state is Loading || state is ResultsLoading) const Padding(
                   padding: EdgeInsets.all(20.0),
                   child: CircularProgressIndicator(),
                 ),
