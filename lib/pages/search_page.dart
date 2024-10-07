@@ -36,107 +36,225 @@ class _SearchPageState extends State<SearchPage> {
   }
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: BlocConsumer<AppBloc, AppState>(
-        listener: (context, state) {
-          if (state is MapDisplayed) {
-            Navigator.of(context).pushNamed("/map");
-          }
-          if (state is Initial) {
-            searchInputController.text = "";
-          }
-        },
-        builder: (context, state) {
-          return SafeArea(
-            child: Column(
-              mainAxisAlignment: state is Initial || state is Loading? MainAxisAlignment.center : MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                if (state is Initial || state is Loading) const Padding(
-                  padding: EdgeInsets.all(20.0),
-                  child: Text(
-                    "Hey there,\n where would you like to explore today?",
-                    style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-                Container(
-                  constraints: const BoxConstraints(maxWidth: 400),
-                  padding: const EdgeInsets.all(8),
-                  child: TextField(
-                    controller: searchInputController,
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(30)), 
-                      contentPadding: const EdgeInsets.only(left: 15),
-                      alignLabelWithHint: true,
-                      hintText: "Search any address, city or coordinates", 
-                      suffixIcon: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: IconButton.filled(onPressed: () {
-                          if (preProcessQuery()) BlocProvider.of<AppBloc>(context).add(NominatimSearch(searchInputController.text));
-                        }, icon: const Icon(Icons.search, color: Colors.white), padding: const EdgeInsets.all(0), ),
+    return WillPopScope(
+      onWillPop: () async {
+        if (BlocProvider.of<AppBloc>(context).state is! Initial) {
+          BlocProvider.of<AppBloc>(context).add(GoToInitial());
+          return false;
+        }
+        else {
+          return true;
+        }
+      },
+      child: Scaffold(
+        body: BlocConsumer<AppBloc, AppState>(
+          listener: (context, state) {
+            if (state is MapDisplayed) {
+              Navigator.of(context).pushNamed("/map");
+            }
+            if (state is Initial) {
+              searchInputController.text = "";
+            }
+          },
+          builder: (context, state) {
+            if (state is Initial) {
+              return SafeArea(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    const Padding(
+                      padding: EdgeInsets.all(20.0),
+                      child: Text(
+                        "Hey there,\n where would you like to explore today?",
+                        style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+                        textAlign: TextAlign.center,
                       ),
                     ),
-                  ),
+                    Container(
+                      constraints: const BoxConstraints(maxWidth: 400),
+                      padding: const EdgeInsets.all(8),
+                      child: TextField(
+                        controller: searchInputController,
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(30)), 
+                          contentPadding: const EdgeInsets.only(left: 15),
+                          alignLabelWithHint: true,
+                          hintText: "Search any address, city or coordinates", 
+                          suffixIcon: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: IconButton.filled(onPressed: () {
+                              if (preProcessQuery()) BlocProvider.of<AppBloc>(context).add(NominatimSearch(searchInputController.text));
+                            }, icon: const Icon(Icons.search, color: Colors.white), padding: const EdgeInsets.all(0), ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(20.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          ElevatedButton(
+                            onPressed: () {
+                              BlocProvider.of<AppBloc>(context).add(
+                                LocateUser((message) => ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message))))
+                              );
+                            }, 
+                            child: const Row(
+                              children: [
+                                Icon(Icons.location_searching),
+                                Padding(
+                                  padding: EdgeInsets.all(8.0),
+                                  child: Text("Your Location"),
+                                ),
+                              ],
+                            )
+                          ),
+                          ElevatedButton(
+                            onPressed: () {
+                              if (preProcessQuery()) BlocProvider.of<AppBloc>(context).add(InstantLocate(searchInputController.text));
+                            }, 
+                            child: const Row(
+                              children: [
+                                Icon(Icons.location_on_outlined),
+                                Padding(
+                                  padding: EdgeInsets.all(8.0),
+                                  child: Text("Insta-Locate"),
+                                ),
+                              ],
+                            )
+                          ),
+                        ],
+                      )
+                    ),
+                  ],
                 ),
-                if (state is Initial) Padding(
-                  padding: const EdgeInsets.all(20.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      ElevatedButton(
-                        onPressed: () {
-                          BlocProvider.of<AppBloc>(context).add(
-                            LocateUser((message) => ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message))))
-                          );
-                        }, 
-                        child: const Row(
-                          children: [
-                            Icon(Icons.location_searching),
-                            Padding(
+              );
+            }
+            else if (state is Loading) {
+              return SafeArea(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    const Padding(
+                      padding: EdgeInsets.all(20.0),
+                      child: Text(
+                        "Hey there,\n where would you like to explore today?",
+                        style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                    Container(
+                      constraints: const BoxConstraints(maxWidth: 400),
+                      padding: const EdgeInsets.all(8),
+                      child: TextField(
+                        controller: searchInputController,
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(30)), 
+                          contentPadding: const EdgeInsets.only(left: 15),
+                          alignLabelWithHint: true,
+                          hintText: "Search any address, city or coordinates", 
+                          suffixIcon: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: IconButton.filled(onPressed: () {
+                              if (preProcessQuery()) BlocProvider.of<AppBloc>(context).add(NominatimSearch(searchInputController.text));
+                            }, icon: const Icon(Icons.search, color: Colors.white), padding: const EdgeInsets.all(0), ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    const Padding(
+                      padding: EdgeInsets.all(20.0),
+                      child: CircularProgressIndicator(),
+                    ),
+                  ],
+                ),
+              );
+            }
+            else if (state is ResultsLoading) {
+              return SafeArea(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Container(
+                      constraints: const BoxConstraints(maxWidth: 400),
+                      padding: const EdgeInsets.all(8),
+                      child: TextField(
+                        controller: searchInputController,
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(30)), 
+                          contentPadding: const EdgeInsets.only(left: 15),
+                          alignLabelWithHint: true,
+                          hintText: "Search any address, city or coordinates", 
+                          suffixIcon: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: IconButton.filled(onPressed: () {
+                              if (preProcessQuery()) BlocProvider.of<AppBloc>(context).add(NominatimSearch(searchInputController.text));
+                            }, icon: const Icon(Icons.search, color: Colors.white), padding: const EdgeInsets.all(0), ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    const Padding(
+                      padding: EdgeInsets.all(20.0),
+                      child: CircularProgressIndicator(),
+                    ),
+                  ],
+                ),
+              );
+            }
+            else if (state is NominatimResultsFetched) {
+                return SafeArea(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Container(
+                      constraints: const BoxConstraints(maxWidth: 400),
+                      padding: const EdgeInsets.all(8),
+                      child: TextField(
+                        controller: searchInputController,
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(30)), 
+                          contentPadding: const EdgeInsets.only(left: 15),
+                          alignLabelWithHint: true,
+                          hintText: "Search any address, city or coordinates", 
+                          suffixIcon: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: IconButton.filled(onPressed: () {
+                              if (preProcessQuery()) BlocProvider.of<AppBloc>(context).add(NominatimSearch(searchInputController.text));
+                            }, icon: const Icon(Icons.search, color: Colors.white), padding: const EdgeInsets.all(0), ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: ListView(
+                        children: [
+                          if (state.results.isEmpty) const Center(
+                            child: Padding(
                               padding: EdgeInsets.all(8.0),
-                              child: Text("Your Location"),
+                              child: Text("Search did not yield any results"),
                             ),
-                          ],
-                        )
+                          ),
+                          ...state.results.map((location) => LocationCard(location: location, onPressed: () {
+                            BlocProvider.of<AppBloc>(context).add(SelectLocation(location, false));
+                          },))
+                        ],
                       ),
-                      ElevatedButton(
-                        onPressed: () {
-                          if (preProcessQuery()) BlocProvider.of<AppBloc>(context).add(InstantLocate(searchInputController.text));
-                        }, 
-                        child: const Row(
-                          children: [
-                            Icon(Icons.location_on_outlined),
-                            Padding(
-                              padding: EdgeInsets.all(8.0),
-                              child: Text("Insta-Locate"),
-                            ),
-                          ],
-                        )
-                      ),
-                    ],
-                  )
+                    )
+                  ],
                 ),
-                if (state is Loading || state is ResultsLoading) const Padding(
-                  padding: EdgeInsets.all(20.0),
-                  child: CircularProgressIndicator(),
-                ),
-                if (state is NominatimResultsFetched) Expanded(
-                  child: ListView(
-                    children: [
-                      if (state.results.isEmpty) const Center(
-                        child: Text("Search did not yield any results"),
-                      ),
-                      ...state.results.map((location) => LocationCard(location: location, onPressed: () {
-                        BlocProvider.of<AppBloc>(context).add(SelectLocation(location, false));
-                      },))
-                    ],
-                  ),
-                )
-              ],
-            ),
-          );
-        },
+              );
+            }
+            else {
+              return const Center(child: Text("Something went wrong"));
+            }
+          },
+        ),
       ),
     );
   }
