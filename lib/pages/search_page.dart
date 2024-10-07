@@ -64,6 +64,7 @@ class _SearchPageState extends State<SearchPage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
+                    const Row(), // dummy row to expand the column's width to maximum
                     const Padding(
                       padding: EdgeInsets.all(20.0),
                       child: Text(
@@ -91,40 +92,47 @@ class _SearchPageState extends State<SearchPage> {
                         ),
                       ),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.all(20.0),
+                    Container(
+                      padding: const EdgeInsets.only(top: 15),
+                      constraints: const BoxConstraints(maxWidth: 400),
                       child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          ElevatedButton(
-                            onPressed: () {
-                              BlocProvider.of<AppBloc>(context).add(
-                                LocateUser((message) => ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message))))
-                              );
-                            }, 
-                            child: const Row(
-                              children: [
-                                Icon(Icons.location_searching),
-                                Padding(
-                                  padding: EdgeInsets.all(8.0),
-                                  child: Text("Your Location"),
-                                ),
-                              ],
-                            )
+                          Padding(
+                            padding: const EdgeInsets.only(right: 5),
+                            child: ElevatedButton(
+                              onPressed: () {
+                                BlocProvider.of<AppBloc>(context).add(
+                                  LocateUser((message) => ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message))))
+                                );
+                              }, 
+                              child: const Row(
+                                children: [
+                                  Icon(Icons.location_searching),
+                                  Padding(
+                                    padding: EdgeInsets.all(8.0),
+                                    child: Text("Your Location"),
+                                  ),
+                                ],
+                              )
+                            ),
                           ),
-                          ElevatedButton(
-                            onPressed: () {
-                              if (preProcessQuery()) BlocProvider.of<AppBloc>(context).add(InstantLocate(searchInputController.text));
-                            }, 
-                            child: const Row(
-                              children: [
-                                Icon(Icons.location_on_outlined),
-                                Padding(
-                                  padding: EdgeInsets.all(8.0),
-                                  child: Text("Insta-Locate"),
-                                ),
-                              ],
-                            )
+                          Padding(
+                            padding: const EdgeInsets.only(left: 5),
+                            child: ElevatedButton(
+                              onPressed: () {
+                                if (preProcessQuery()) BlocProvider.of<AppBloc>(context).add(InstantLocate(searchInputController.text));
+                              }, 
+                              child: const Row(
+                                children: [
+                                  Icon(Icons.location_on_outlined),
+                                  Padding(
+                                    padding: EdgeInsets.all(8.0),
+                                    child: Text("Insta-Locate"),
+                                  ),
+                                ],
+                              )
+                            ),
                           ),
                         ],
                       )
@@ -139,6 +147,7 @@ class _SearchPageState extends State<SearchPage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
+                    const Row(),
                     const Padding(
                       padding: EdgeInsets.all(20.0),
                       child: Text(
@@ -180,6 +189,7 @@ class _SearchPageState extends State<SearchPage> {
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
+                    const Row(),
                     Container(
                       constraints: const BoxConstraints(maxWidth: 400),
                       padding: const EdgeInsets.all(8),
