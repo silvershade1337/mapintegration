@@ -45,7 +45,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
         List results = jsonDecode(resp.body);
         var resultLocations = results.map((e) => Location(double.parse(e["lat"]), double.parse(e["lon"]), displayName:e["display_name"], name:e["name"], type:e["type"]),);
         if(resultLocations.isNotEmpty) {
-          emit(MapDisplayed(resultLocations.toList()[0], false));
+          emit(MapDisplayed(resultLocations.toList()[0], false, null));
         }
         else {
           emit(NominatimResultsFetched(resultLocations.toList()));
@@ -56,8 +56,24 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     }
   }
 
-  _selectLocation(SelectLocation event, Emitter<AppState> emit) {
-    emit(MapDisplayed(event.location, false));
+  _selectLocation(SelectLocation event, Emitter<AppState> emit) async {
+    String? tempwithunit;
+    Uri uri = Uri.https(
+      "api.open-meteo.com", 
+      "v1/forecast", 
+      {'latitude': event.location.latitude.toString(), 'longitude': event.location.longitude.toString(), 'current':'temperature_2m,wind_speed_10m'});
+    try {
+      var resp = await httpClient.get(uri);
+      if (resp.statusCode == 200) {
+        var results = jsonDecode(resp.body);
+        String unit = results['current_units']['temperature_2m'];
+        double temp = results['current']['temperature_2m'];
+        tempwithunit = temp.toString() + unit;
+      }
+    } catch (e) {
+      // print(e);
+    }
+    emit(MapDisplayed(event.location, false, tempwithunit));
   }
 
   _locateUser(LocateUser event, Emitter<AppState> emit) async {
@@ -90,6 +106,6 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     } 
 
     Position userLocation = await Geolocator.getCurrentPosition();
-    emit(MapDisplayed(Location(userLocation.latitude, userLocation.longitude, name:"User Location"), true)); 
+    emit(MapDisplayed(Location(userLocation.latitude, userLocation.longitude, name:"User Location"), true, null)); 
   }
 }

@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_map/flutter_map.dart';
@@ -45,13 +46,20 @@ class _MapPageState extends State<MapPage> {
                             urlTemplate:topological? 'https://a.tile.opentopomap.org/{z}/{x}/{y}.png' : 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
                             userAgentPackageName: 'com.example.app',
                           ),
-                            MarkerLayer(
+                          MarkerLayer(
                             markers: [
                               Marker(
+                                height: 60,
+                                width: 100,
                                 point: LatLng(state.location.latitude, state.location.longitude), 
-                                child: state.isUserLocation? const Icon(Icons.my_location, color: Colors.lightBlue, size: 30) :  const Icon(Icons.location_on, color: Colors.red, size: 30),
+                                child: Column(
+                                  children: [
+                                    state.isUserLocation? const Icon(Icons.my_location, color: Colors.lightBlue, size: 30) :  const Icon(Icons.location_on, color: Colors.red, size: 30),
+                                    if (state.temperature != null) Container(decoration: BoxDecoration(borderRadius: BorderRadius.circular(5), color: Colors.white), child: Text(state.temperature!, style: TextStyle(color: Colors.black, fontSize: 15),))
+                                  ],
+                                ),
                                 rotate: true
-                              )
+                              ),
                             ]
                           ),
                           RichAttributionWidget(

@@ -39,8 +39,9 @@ final class NominatimResultsFetched extends AppState {
 final class MapDisplayed extends AppState {
   final Location location;
   final bool isUserLocation;
+  final String? temperature;
 
-  const MapDisplayed(this.location, this.isUserLocation);
+  const MapDisplayed(this.location, this.isUserLocation, this.temperature);
 
   @override
   List<Object> get props => [location, isUserLocation];

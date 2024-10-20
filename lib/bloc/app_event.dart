@@ -33,6 +33,7 @@ final class InstantLocate extends AppEvent {
 final class SelectLocation extends AppEvent {
   final Location location;
   final bool userLocation;
+  
 
   SelectLocation(this.location, this.userLocation);
 
